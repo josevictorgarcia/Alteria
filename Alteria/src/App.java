@@ -5,7 +5,7 @@ public class App {
         try {
             EncryptionDecryption aes = new EncryptionDecryption();
             aes.initialize();
-            File encryptedMessage = new File("/Users/josevictorgarciallorente/Desktop/test.txt");
+            File encryptedMessage = new File("/Users/josevictorgarciallorente/Desktop/test.zip");
             aes.encrypt(encryptedMessage);
             aes.decrypt(encryptedMessage);
         } catch (Exception ex){

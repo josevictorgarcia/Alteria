@@ -22,14 +22,15 @@ public class EncryptionDecryption {
         try{
             FileInputStream fr = new FileInputStream(file.getPath());
         
-            byte[] messageInBytes = new byte[(int) file.length()];
+            //byte[] messageInBytes = new byte[(int) file.length()];
+            byte[] messageInBytes = java.nio.file.Files.readAllBytes(file.toPath());
             fr.read(messageInBytes);
 
             //byte[] messageInBytes = ois.getBytes();
             this.encryptionCipher = Cipher.getInstance("AES/GCM/NoPadding");
             this.encryptionCipher.init(Cipher.ENCRYPT_MODE, key);
             byte[] encryptedBytes = encryptionCipher.doFinal(messageInBytes);
-            encode(encryptedBytes);
+            encode(encryptedBytes, file);
         } catch (IOException ex) {
             System.out.println("Encryption error");
         }
@@ -48,15 +49,15 @@ public class EncryptionDecryption {
             decryptionCipher.init(Cipher.DECRYPT_MODE, key, spec);
             byte[] decryptedBytes = decryptionCipher.doFinal(messageInBytes);
 
-            decode(decryptedBytes);
+            decode(decryptedBytes, file);
         } catch (IOException ex) {
             System.out.println("Decryption error");
         }
     }
 
-    private void encode(byte[] data) {
+    private void encode(byte[] data, File file) {
         try{
-            FileOutputStream fos = new FileOutputStream("/Users/josevictorgarciallorente/Desktop/test.txt");
+            FileOutputStream fos = new FileOutputStream(file);
             fos.write(data);
             fos.close();
         } catch (IOException ex) {
@@ -64,9 +65,9 @@ public class EncryptionDecryption {
         }
     }
 
-    private void decode(byte[] data) {
+    private void decode(byte[] data, File file) {
         try {
-            FileOutputStream fos = new FileOutputStream("/Users/josevictorgarciallorente/Desktop/test.txt");
+            FileOutputStream fos = new FileOutputStream(file);
             fos.write(data);
             fos.close(); 
         } catch (IOException ex) {
