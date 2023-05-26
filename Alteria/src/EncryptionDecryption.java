@@ -12,7 +12,7 @@ public class EncryptionDecryption {
     private final int T_LEN = 128;
     private Cipher encryptionCipher;
 
-    public void initialize() throws Exception{
+    public EncryptionDecryption() throws Exception{
         KeyGenerator generator = KeyGenerator.getInstance("AES");
         generator.init(KEY_SIZE);
         this.key = generator.generateKey();
@@ -20,16 +20,18 @@ public class EncryptionDecryption {
 
     public void encrypt(File file) throws Exception {
         try{
-            FileInputStream fr = new FileInputStream(file.getPath());
-        
+            //FileInputStream fr = new FileInputStream(file.getPath());
+
+            this.encryptionCipher = Cipher.getInstance("AES/GCM/NoPadding");    //Esta linea y la siguiente son CLAVE
+            this.encryptionCipher.init(Cipher.ENCRYPT_MODE, key);                              //Inicializar de nuevo el cifrado de encriptacion al acabar el metodo encrypt
+
             //byte[] messageInBytes = new byte[(int) file.length()];
             byte[] messageInBytes = java.nio.file.Files.readAllBytes(file.toPath());
-            fr.read(messageInBytes);
+            //fr.read(messageInBytes);
 
             //byte[] messageInBytes = ois.getBytes();
-            this.encryptionCipher = Cipher.getInstance("AES/GCM/NoPadding");
-            this.encryptionCipher.init(Cipher.ENCRYPT_MODE, key);
             byte[] encryptedBytes = encryptionCipher.doFinal(messageInBytes);
+
             encode(encryptedBytes, file);
         } catch (IOException ex) {
             System.out.println("Encryption error");
