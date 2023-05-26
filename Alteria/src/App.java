@@ -4,7 +4,7 @@ public class App {
     public static void main(String[] args) {
         FolderIterator fi = new FolderIterator("/Users/josevictorgarciallorente/Desktop/test");
         fi.encryptDirectory();
-        //fi.decryptDirectory();
+        fi.decryptDirectory();
         //try {
             //EncryptionDecryption aes = new EncryptionDecryption();
             //aes.initialize();

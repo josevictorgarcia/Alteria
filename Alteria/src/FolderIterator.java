@@ -1,32 +1,32 @@
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FolderIterator {
 
     private String directory;
-    private EncryptionDecryption aes;
+    private List<EncryptionDecryption> aes;
 
     public FolderIterator(String directory){
         this.directory = directory;
-        //this.aes = new EncryptionDecryption();  
-        try {
-            this.aes = new EncryptionDecryption();     //Initialization of encryption system (only one key will be generated)
-        } catch(Exception ex){
-            System.out.println("An exception initializing the EncryptionDecryption system occurred");
-        }
+        this.aes = new ArrayList<EncryptionDecryption>();
     }
 
     public void encryptDirectory(){
-            
+        
         File dir = new File(this.directory);
         File[] directoryListing = dir.listFiles();
         if (directoryListing != null) {
             for (File fileInFolder : directoryListing) {        //Every file in folder is encrypted
-
-            //File encryptedMessage = new File("/Users/josevictorgarciallorente/Desktop/test.zip");
-            try {
-                this.aes.encrypt(fileInFolder);
-                //this.aes.decrypt(fileInFolder);
-            } catch (Exception ex) {
+                try {
+                    this.aes.add(new EncryptionDecryption());     //Initialization of encryption system (only one key will be generated)
+                } catch(Exception ex){
+                    System.out.println("An exception initializing the EncryptionDecryption system occurred");
+                }
+                try {
+                    this.aes.get(this.aes.size()-1).encrypt(fileInFolder);
+                    //this.aes.decrypt(fileInFolder);
+                } catch (Exception ex) {
                 System.out.println("An exception during the encryption process occurred");
             }
             //System.out.println(fileInFolder.getName());
@@ -40,21 +40,22 @@ public class FolderIterator {
         }
     }
 
-/*     public void decryptDirectory(){
-            
+    public void decryptDirectory(){
+
+        int index = 0;
+
         File dir = new File(this.directory);
         File[] directoryListing = dir.listFiles();
         if (directoryListing != null) {
             for (File fileInFolder : directoryListing) {        //Every file in folder is decrypted
 
-            //File encryptedMessage = new File("/Users/josevictorgarciallorente/Desktop/test.zip");
             try {
-                this.aes.decrypt(fileInFolder);
+                this.aes.get(index).decrypt(fileInFolder);
             } catch (Exception ex) {
                 System.out.println("An exception during the decryption process occurred");
             }
             //System.out.println(fileInFolder.getName());
-            
+            index++;
         }
         } else {
             // Handle the case where dir is not really a directory.
@@ -62,6 +63,6 @@ public class FolderIterator {
             // to avoid race conditions with another process that deletes
             // directories.
         }
-    }   */
+    }
     
 }
