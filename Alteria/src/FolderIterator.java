@@ -64,5 +64,13 @@ public class FolderIterator {
             // directories.
         }
     }
+
+    public void reset(){
+        this.aes.clear();
+    }
+
+    public boolean isEncrypted(){
+        return !this.aes.isEmpty();
+    }
     
 }
