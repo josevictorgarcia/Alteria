@@ -1,5 +1,12 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 //import java.io.FileInputStream;
 //import java.io.FileOutputStream;
 //import java.io.IOException;
@@ -8,7 +15,9 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-public class Gui implements ActionListener{
+public class Gui implements ActionListener, Serializable{
+
+private FolderIterator fi;
 
     public Gui(){
         
@@ -31,20 +40,35 @@ public class Gui implements ActionListener{
     button1.setBounds(0 , 50 , 200 , 100);
     button2.setBounds(200 , 50 , 200 , 100);
 
-    FolderIterator fi = new FolderIterator("/Users/josevictorgarciallorente/Desktop/test");
+    //FolderIterator fi = new FolderIterator("/Users/josevictorgarciallorente/Desktop/test");
 
     button1.addActionListener(new Gui() {
         public void actionPerformed(ActionEvent e){
+            try{ 
+                fi = loadData();
+            } 
+            catch(Exception ex) {
+                System.out.println("Error Class Gui button1.addActionListener");
+            }
             if (!fi.isEncrypted()){
                 fi.encryptDirectory();
             }
+            saveData(fi);
         }
     });
 
     button2.addActionListener(new Gui() {
         public void actionPerformed(ActionEvent e){
-            fi.decryptDirectory();
-            fi.reset();
+            try{ 
+                fi = loadData();
+                fi.decryptDirectory();
+                fi.reset();
+                saveData(fi);
+            } 
+            catch(Exception ex) {
+                System.out.println("Error Class Gui button2.addActionListener");
+            }
+            
         }
     });
 
@@ -55,6 +79,31 @@ public class Gui implements ActionListener{
         throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
     }
 
+    public FolderIterator loadData() throws Exception {
+        try {
+            FileInputStream archivo = new FileInputStream("aes.ser");
+            ObjectInputStream ois = new ObjectInputStream(archivo);
+            FolderIterator aes = (FolderIterator) ois.readObject();
+            ois.close();
+            return aes;
+        }
+        catch(IOException | ClassNotFoundException e) {
+           //lo creamos pues no hay archivo
+            return new FolderIterator("/Users/josevictorgarciallorente/Desktop/test");
+        }
+    }
+    
+    //guarda en memoria la estructura equipos
+    public void saveData(FolderIterator fi) {
+        try {
+            FileOutputStream archivo = new FileOutputStream("aes.ser");
+            ObjectOutputStream oos = new ObjectOutputStream(archivo);
+            oos.writeObject(fi);
+            oos.close();
+        }
+        catch (Exception ex) {
+        System.out.println("Error clase App method saveEquipos");}
+    }
 
     /*public void saveData(){
         String file =  Gui.CONFIGURATIONFOLDER + File.separatorChar + "ConfigFiles";
