@@ -1,20 +1,22 @@
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FolderIterator implements Serializable {
 
     private String directory;
     //private List<EncryptionDecryption> aes;
     EncryptionDecryption aes;
-    private List<byte[]> byteList;
+    private Map<String, byte[]> fileMap;
 
     public FolderIterator(String directory) throws Exception{
         this.directory = directory;
         //this.aes = new ArrayList<EncryptionDecryption>();
         this.aes = new EncryptionDecryption();
-        this.byteList = new ArrayList<byte[]>();
+        this.fileMap = new HashMap<String, byte[]>();
     }
 
     public void encryptDirectory() {
@@ -32,7 +34,7 @@ public class FolderIterator implements Serializable {
                 try {
 //                    this.aes.get(this.aes.size()-1).encrypt(fileInFolder);
                     //this.aes.decrypt(fileInFolder);
-                    this.byteList.add(aes.encrypt(fileInFolder));
+                    this.fileMap.put(fileInFolder.getPath(), aes.encrypt(fileInFolder));
                 } catch (Exception ex) {
                 System.out.println("An exception during the encryption process occurred");
             }
@@ -49,20 +51,20 @@ public class FolderIterator implements Serializable {
 
     public void decryptDirectory() throws Exception{
 
-        int index = 0;
+        //int index = 0;
 
         File dir = new File(this.directory);
         File[] directoryListing = dir.listFiles();
         if (directoryListing != null) {
             for (File fileInFolder : directoryListing) {        //Every file in folder is decrypted
-                aes.decrypt(this.byteList.get(index), fileInFolder);
+                aes.decrypt(this.fileMap.get(fileInFolder.getPath()), fileInFolder);
 //            try {
 //                this.aes.get(index).decrypt(fileInFolder);
 //            } catch (Exception ex) {
 //               System.out.println("An exception during the decryption process occurred");
 //            }
             //System.out.println(fileInFolder.getName());
-            index++;
+            //index++;
         }
         } else {
             // Handle the case where dir is not really a directory.
@@ -74,12 +76,12 @@ public class FolderIterator implements Serializable {
 
     public void reset(){
         //this.aes.clear();
-        this.byteList.clear();
+        this.fileMap.clear();
     }
 
     public boolean isEncrypted(){
         //return !this.aes.isEmpty();
-        return !this.byteList.isEmpty();
+        return !this.fileMap.isEmpty();
     }
     
 }
